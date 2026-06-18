@@ -1,4 +1,15 @@
-import type { Athlete, AthleteCreate, AuthResponse, User } from "@/lib/types"
+import type {
+  Athlete,
+  AthleteCreate,
+  AuthResponse,
+  CompleteUploadResponse,
+  InitUploadResponse,
+  PlaybackUrlResponse,
+  Session,
+  SessionCreate,
+  SessionListItem,
+  User,
+} from "@/lib/types"
 
 const BASE = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}/api/v1`
 
@@ -17,9 +28,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE}${path}`, { ...options, headers })
   if (res.status === 204) return undefined as T
   const body = await res.json().catch(() => ({}))
-  if (!res.ok) {
-    throw new Error(body?.detail ?? `HTTP ${res.status}`)
-  }
+  if (!res.ok) throw new Error(body?.detail ?? `HTTP ${res.status}`)
   return body as T
 }
 
@@ -40,5 +49,36 @@ export const api = {
     update: (id: string, data: Partial<AthleteCreate>) =>
       request<Athlete>(`/athletes/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
     delete: (id: string) => request(`/athletes/${id}`, { method: "DELETE" }),
+  },
+  sessions: {
+    list: (athleteId: string) =>
+      request<SessionListItem[]>(`/athletes/${athleteId}/sessions`),
+    get: (sessionId: string) => request<Session>(`/sessions/${sessionId}`),
+    create: (athleteId: string, data: SessionCreate) =>
+      request<Session>(`/athletes/${athleteId}/sessions`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    update: (sessionId: string, data: Partial<SessionCreate>) =>
+      request<Session>(`/sessions/${sessionId}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+    delete: (sessionId: string) => request(`/sessions/${sessionId}`, { method: "DELETE" }),
+  },
+  videos: {
+    initUpload: (
+      sessionId: string,
+      data: { filename: string; content_type: string; size_bytes: number }
+    ) =>
+      request<InitUploadResponse>(`/sessions/${sessionId}/videos/init-upload`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    completeUpload: (videoId: string) =>
+      request<CompleteUploadResponse>(`/videos/${videoId}/complete-upload`, { method: "POST" }),
+    playbackUrl: (videoId: string) =>
+      request<PlaybackUrlResponse>(`/videos/${videoId}/playback-url`),
+    delete: (videoId: string) => request(`/videos/${videoId}`, { method: "DELETE" }),
   },
 }

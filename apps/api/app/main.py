@@ -1,9 +1,14 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.auth.routes import router as auth_router
 from app.athletes.routes import router as athletes_router
 from app.core.config import settings
+from app.sessions.routes import router as sessions_router
+from app.videos.routes import router as videos_router
 
 app = FastAPI(
     title=settings.app_name,
@@ -23,6 +28,13 @@ app.add_middleware(
 API_PREFIX = "/api/v1"
 app.include_router(auth_router, prefix=API_PREFIX)
 app.include_router(athletes_router, prefix=API_PREFIX)
+app.include_router(sessions_router, prefix=API_PREFIX)
+app.include_router(videos_router, prefix=API_PREFIX)
+
+# Local dev: serve uploaded files as static. Not used in production.
+if settings.storage_provider == "local":
+    os.makedirs(settings.storage_local_dir, exist_ok=True)
+    app.mount("/storage", StaticFiles(directory=settings.storage_local_dir), name="storage")
 
 
 @app.get("/health")

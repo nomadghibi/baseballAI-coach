@@ -12,6 +12,8 @@ if config.config_file_name is not None:
 from app.core.database import Base
 from app.auth.models import User  # noqa: F401
 from app.athletes.models import Athlete  # noqa: F401
+from app.sessions.models import PitchingSession  # noqa: F401
+from app.videos.models import Video  # noqa: F401
 
 target_metadata = Base.metadata
 
