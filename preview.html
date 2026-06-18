@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BaseballAI Coach — Design Preview</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+
+<!-- NAV -->
+<nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+  <span class="font-bold text-gray-900">BaseballAI Coach</span>
+  <button class="text-sm text-gray-500 hover:text-gray-700">Sign out</button>
+</nav>
+
+<main class="max-w-2xl mx-auto px-6 py-8 space-y-8">
+
+  <!-- HEADER -->
+  <div class="flex items-start justify-between">
+    <h1 class="text-2xl font-bold text-gray-900">Jake</h1>
+    <div class="flex gap-2">
+      <button class="text-sm px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50">Edit</button>
+      <button class="text-sm px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50">Delete</button>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+    <div class="flex justify-between text-sm"><span class="text-gray-500">Position</span><span class="text-gray-900 font-medium capitalize">Pitcher</span></div>
+    <div class="flex justify-between text-sm"><span class="text-gray-500">Throws</span><span class="text-gray-900 font-medium capitalize">Right</span></div>
+    <div class="flex justify-between text-sm"><span class="text-gray-500">Bats</span><span class="text-gray-900 font-medium capitalize">Right</span></div>
+    <div class="flex justify-between text-sm"><span class="text-gray-500">Birth year</span><span class="text-gray-900 font-medium">2014</span></div>
+    <div class="flex justify-between text-sm"><span class="text-gray-500">Height</span><span class="text-gray-900 font-medium">52 in</span></div>
+    <div class="flex justify-between text-sm"><span class="text-gray-500">Weight</span><span class="text-gray-900 font-medium">78 lbs</span></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <section>
+    <h2 class="text-lg font-semibold text-gray-800 mb-3">Progress</h2>
+    <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
+
+      <!-- Latest + delta -->
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">Latest overall score</p>
+          <p class="text-5xl font-bold text-gray-900 tabular-nums mt-1">82</p>
+          <p class="text-xs text-gray-400 mt-0.5">Jun 18, 2026 · Backyard bullpen</p>
+        </div>
+        <div class="text-right">
+          <p class="text-3xl font-bold tabular-nums text-green-600">+4</p>
+          <p class="text-xs text-gray-400">vs prev session</p>
+        </div>
+      </div>
+
+      <!-- Trend chart -->
+      <div>
+        <p class="text-xs text-gray-400 font-medium mb-1">Overall score over time</p>
+        <svg viewBox="0 0 600 190" class="w-full" style="height:190px">
+          <defs>
+            <linearGradient id="fill" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <line x1="32" x2="584" y1="28" y2="28" stroke="#f3f4f6"/>
+          <line x1="32" x2="584" y1="75" y2="75" stroke="#f3f4f6"/>
+          <line x1="32" x2="584" y1="123" y2="123" stroke="#f3f4f6"/>
+          <line x1="32" x2="584" y1="170" y2="170" stroke="#f3f4f6"/>
+          <text x="27" y="32" text-anchor="end" font-size="9" fill="#d1d5db">100</text>
+          <text x="27" y="127" text-anchor="end" font-size="9" fill="#d1d5db">50</text>
+          <text x="27" y="174" text-anchor="end" font-size="9" fill="#d1d5db">0</text>
+          <polygon points="32,170 32,106 213,114 394,82 554,68 584,170" fill="url(#fill)"/>
+          <polyline points="32,106 213,114 394,82 554,68" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="32" y="98" text-anchor="start" font-size="11" fill="#1f2937" font-weight="700">68</text>
+          <circle cx="32" cy="106" r="4" fill="white" stroke="#3b82f6" stroke-width="2"/>
+          <text x="213" y="106" text-anchor="middle" font-size="11" fill="#1f2937" font-weight="700">72</text>
+          <circle cx="213" cy="114" r="4" fill="white" stroke="#3b82f6" stroke-width="2"/>
+          <text x="394" y="74" text-anchor="middle" font-size="11" fill="#1f2937" font-weight="700">78</text>
+          <circle cx="394" cy="82" r="4" fill="white" stroke="#3b82f6" stroke-width="2"/>
+          <text x="554" y="60" text-anchor="end" font-size="11" fill="#1f2937" font-weight="700">82</text>
+          <circle cx="554" cy="68" r="6" fill="white" stroke="#2563eb" stroke-width="3"/>
+          <text x="32" y="186" text-anchor="start" font-size="9" fill="#9ca3af">May 3</text>
+          <text x="213" y="186" text-anchor="middle" font-size="9" fill="#9ca3af">May 22</text>
+          <text x="394" y="186" text-anchor="middle" font-size="9" fill="#9ca3af">Jun 7</text>
+          <text x="554" y="186" text-anchor="end" font-size="9" fill="#9ca3af">Jun 18</text>
+        </svg>
+      </div>
+
+      <!-- Comparison table -->
+      <div>
+        <p class="text-xs text-gray-400 font-medium uppercase tracking-wide mb-3">Latest vs previous</p>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-sm"><span class="text-gray-600">Balance</span><div class="flex gap-4"><span class="text-gray-900 font-medium w-8 text-right tabular-nums">90</span><span class="w-10 text-right text-xs font-semibold tabular-nums text-green-600">+5</span></div></div>
+          <div class="flex items-center justify-between text-sm"><span class="text-gray-600">Head stability</span><div class="flex gap-4"><span class="text-gray-900 font-medium w-8 text-right tabular-nums">74</span><span class="w-10 text-right text-xs font-semibold tabular-nums text-red-500">-3</span></div></div>
+          <div class="flex items-center justify-between text-sm"><span class="text-gray-600">Stride</span><div class="flex gap-4"><span class="text-gray-900 font-medium w-8 text-right tabular-nums">80</span><span class="w-10 text-right text-xs font-semibold tabular-nums text-green-600">+8</span></div></div>
+          <div class="flex items-center justify-between text-sm"><span class="text-gray-600">Arm slot</span><div class="flex gap-4"><span class="text-gray-900 font-medium w-8 text-right tabular-nums">78</span><span class="w-10 text-right text-xs font-semibold tabular-nums text-gray-400">+1</span></div></div>
+          <div class="flex items-center justify-between text-sm"><span class="text-gray-600">Follow-through</span><div class="flex gap-4"><span class="text-gray-900 font-medium w-8 text-right tabular-nums">86</span><span class="w-10 text-right text-xs font-semibold tabular-nums text-green-600">+7</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SESSIONS -->
+  <section>
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-semibold text-gray-800">Sessions</h2>
+      <a href="#" class="text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700">New session</a>
+    </div>
+    <div class="space-y-2">
+      <div class="flex items-center justify-between bg-white rounded-xl border border-gray-200 px-5 py-4 hover:shadow-sm">
+        <div><div class="font-medium text-gray-900 text-sm">Backyard bullpen</div><div class="text-xs text-gray-400 mt-0.5">Jun 18, 2026 · side view</div></div>
+        <div class="flex items-center gap-2"><span class="text-sm font-bold text-gray-700 tabular-nums">82</span><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">Analyzed</span></div>
+      </div>
+      <div class="flex items-center justify-between bg-white rounded-xl border border-gray-200 px-5 py-4 hover:shadow-sm">
+        <div><div class="font-medium text-gray-900 text-sm">Weekend practice</div><div class="text-xs text-gray-400 mt-0.5">Jun 7, 2026 · side view</div></div>
+        <div class="flex items-center gap-2"><span class="text-sm font-bold text-gray-700 tabular-nums">78</span><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">Analyzed</span></div>
+      </div>
+      <div class="flex items-center justify-between bg-white rounded-xl border border-gray-200 px-5 py-4 hover:shadow-sm">
+        <div><div class="font-medium text-gray-900 text-sm">Session May 22</div><div class="text-xs text-gray-400 mt-0.5">May 22, 2026 · side view</div></div>
+        <div class="flex items-center gap-2"><span class="text-sm font-bold text-gray-700 tabular-nums">72</span><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">Analyzed</span></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
