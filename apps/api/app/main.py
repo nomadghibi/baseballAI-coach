@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.auth.routes import router as auth_router
+from app.athletes.routes import router as athletes_router
 from app.core.config import settings
 
 app = FastAPI(
@@ -18,11 +20,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+API_PREFIX = "/api/v1"
+app.include_router(auth_router, prefix=API_PREFIX)
+app.include_router(athletes_router, prefix=API_PREFIX)
+
 
 @app.get("/health")
 async def health():
-    return {
-        "status": "ok",
-        "service": "baseballai-api",
-        "version": settings.version,
-    }
+    return {"status": "ok", "service": "baseballai-api", "version": settings.version}
