@@ -20,10 +20,22 @@ router = APIRouter(tags=["sessions"])
 
 
 def _attach_video(db: Session, pitching_session: PitchingSession) -> SessionResponse:
+    from app.analysis.models import AnalysisJob
+
     video = db.query(Video).filter(Video.session_id == pitching_session.id).first()
     data = SessionResponse.model_validate(pitching_session)
     if video:
-        data.video = VideoSummary.model_validate(video)
+        vs = VideoSummary.model_validate(video)
+        # Attach active job_id when job is still running
+        active_job = (
+            db.query(AnalysisJob)
+            .filter(AnalysisJob.video_id == video.id, AnalysisJob.status.in_(["queued", "processing"]))
+            .order_by(AnalysisJob.created_at.desc())
+            .first()
+        )
+        if active_job:
+            vs.active_job_id = active_job.id
+        data.video = vs
     return data
 
 

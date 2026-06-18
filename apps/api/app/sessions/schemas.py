@@ -28,6 +28,7 @@ class VideoSummary(BaseModel):
     size_bytes: int | None
     content_type: str
     created_at: datetime
+    active_job_id: UUID | None = None  # set when job is queued/processing
 
 
 class SessionResponse(BaseModel):

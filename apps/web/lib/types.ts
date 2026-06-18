@@ -39,6 +39,7 @@ export interface VideoSummary {
   size_bytes: number | null
   content_type: string
   created_at: string
+  active_job_id: string | null
 }
 
 export interface Session {
@@ -89,4 +90,41 @@ export interface PlaybackUrlResponse {
   video_id: string
   playback_url: string
   expires_in_seconds: number
+}
+
+export interface AnalysisJob {
+  id: string
+  video_id: string
+  status: string // queued | processing | completed | failed
+  error_message: string | null
+  started_at: string | null
+  completed_at: string | null
+  created_at: string
+}
+
+export interface FeedbackItem {
+  category: string
+  severity: string // positive | focus | caution | recording_quality
+  message: string
+  suggestion: string
+}
+
+export interface AnalysisResult {
+  video_id: string
+  session_id: string
+  athlete_id: string
+  overall_score: number
+  scores: {
+    balance: number
+    head_stability: number
+    stride: number
+    arm_slot: number
+    follow_through: number
+    video_quality: number
+  }
+  phases: { name: string; start_sec: number; end_sec: number; confidence: number }[]
+  metrics_detail: Record<string, { score: number; confidence: number; details: Record<string, number> }>
+  feedback: FeedbackItem[]
+  keypoints: unknown[]
+  created_at: string
 }

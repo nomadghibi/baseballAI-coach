@@ -9,7 +9,7 @@ const MAX_SIZE_MB = 500
 
 interface VideoUploadProps {
   sessionId: string
-  onComplete: (videoId: string) => void
+  onComplete: (videoId: string, jobId: string | null) => void
 }
 
 type UploadState = "idle" | "uploading" | "completing" | "done" | "error"
@@ -50,10 +50,10 @@ export default function VideoUpload({ sessionId, onComplete }: VideoUploadProps)
       await uploadWithProgress(file, upload_url, storage_provider, setProgress)
 
       setState("completing")
-      await api.videos.completeUpload(video_id)
+      const completeRes = await api.videos.completeUpload(video_id)
 
       setState("done")
-      onComplete(video_id)
+      onComplete(video_id, completeRes.analysis_job_id)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed")
       setState("error")

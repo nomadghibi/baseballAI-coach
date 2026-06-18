@@ -1,9 +1,12 @@
 import uuid
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 from sqlalchemy.orm import Session
 
+from app.analysis.models import AnalysisJob
+from app.analysis.worker import run_analysis_job_task
 from app.auth.models import User
+from app.core import storage as store
 from app.core.config import settings
 from app.core.deps import get_current_user, get_db
 from app.videos import service
@@ -14,7 +17,6 @@ from app.videos.schemas import (
     PlaybackUrlResponse,
     VideoResponse,
 )
-from app.core import storage as store
 
 router = APIRouter(tags=["videos"])
 
@@ -56,11 +58,22 @@ async def upload_local(
 @router.post("/videos/{video_id}/complete-upload", response_model=CompleteUploadResponse)
 def complete_upload(
     video_id: uuid.UUID,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     video = service.complete_upload(db, video_id, current_user.id)
-    return CompleteUploadResponse(video_id=video.id, status=video.status, analysis_job_id=None)
+
+    job = AnalysisJob(video_id=video.id, status="queued")
+    db.add(job)
+    db.commit()
+    db.refresh(job)
+
+    background_tasks.add_task(run_analysis_job_task, job.id, video.id)
+
+    return CompleteUploadResponse(
+        video_id=video.id, status=video.status, analysis_job_id=job.id
+    )
 
 
 @router.get("/videos/{video_id}/playback-url", response_model=PlaybackUrlResponse)

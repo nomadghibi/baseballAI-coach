@@ -1,4 +1,6 @@
 import type {
+  AnalysisJob,
+  AnalysisResult,
   Athlete,
   AthleteCreate,
   AuthResponse,
@@ -80,5 +82,14 @@ export const api = {
     playbackUrl: (videoId: string) =>
       request<PlaybackUrlResponse>(`/videos/${videoId}/playback-url`),
     delete: (videoId: string) => request(`/videos/${videoId}`, { method: "DELETE" }),
+  },
+  analysis: {
+    getJob: (jobId: string) => request<AnalysisJob>(`/analysis-jobs/${jobId}`),
+    getLatestJob: (videoId: string) =>
+      request<AnalysisJob>(`/videos/${videoId}/analysis-job`),
+    getResult: (videoId: string) =>
+      request<AnalysisResult>(`/videos/${videoId}/analysis`),
+    trigger: (videoId: string) =>
+      request<AnalysisJob>(`/videos/${videoId}/analyze`, { method: "POST" }),
   },
 }
