@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN mkdir -p storage/uploads
+RUN mkdir -p storage/uploads && chmod +x start.sh
 
 EXPOSE 10000
 
-CMD alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-10000}
+CMD ["./start.sh"]
