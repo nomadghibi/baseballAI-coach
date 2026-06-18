@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+.env
+!.env.example
+!apps/api/.env.example
+
+# Alembic
+apps/api/alembic/versions/*.pyc
+
+# Node
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# Env files
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+!*.env.local.example
+
+# Storage (never commit real videos)
+storage/*.mp4
+storage/*.mov
+storage/*.avi
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
