@@ -1,4 +1,5 @@
 import json
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -8,6 +9,14 @@ class Settings(BaseSettings):
     debug: bool = False
 
     database_url: str = "postgresql://baseballai:baseballai_dev@localhost:5432/baseballai"
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def fix_postgres_scheme(cls, v: str) -> str:
+        # Render (and some providers) return postgres:// — SQLAlchemy 2.x needs postgresql://
+        if isinstance(v, str) and v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql://", 1)
+        return v
 
     cors_origins: list[str] = ["http://localhost:3000"]
 

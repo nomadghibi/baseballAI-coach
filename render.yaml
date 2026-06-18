@@ -7,10 +7,9 @@ databases:
 services:
   - type: web
     name: baseballai-api
-    runtime: python
-    rootDir: apps/api
-    buildCommand: pip install -r requirements.txt
-    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    runtime: docker
+    dockerfilePath: apps/api/Dockerfile
+    dockerContext: apps/api
     plan: free
     envVars:
       - key: DATABASE_URL
@@ -25,5 +24,3 @@ services:
         value: '["https://baseballai-coach.vercel.app","http://localhost:3000"]'
       - key: STORAGE_PROVIDER
         value: local
-      - key: PYTHON_VERSION
-        value: "3.12.0"
