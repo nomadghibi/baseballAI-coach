@@ -89,6 +89,13 @@ export default function DashboardPage() {
             </Link>
           ))}
         </div>
+
+        <div className="mt-10 pb-6">
+          <p className="text-xs text-gray-400 text-center">
+            All videos and analysis are private to your account only.
+            Not medical advice.
+          </p>
+        </div>
       </main>
     </div>
   )

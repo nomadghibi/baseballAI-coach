@@ -32,7 +32,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE}${path}`, { ...options, headers })
   if (res.status === 204) return undefined as T
   const body = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(body?.detail ?? `HTTP ${res.status}`)
+  if (!res.ok) {
+    // Support both legacy {"detail": "..."} and new {"error": {"message": "..."}} shapes
+    const msg = body?.error?.message ?? body?.detail ?? `HTTP ${res.status}`
+    throw new Error(msg)
+  }
   return body as T
 }
 

@@ -77,6 +77,13 @@ export default function RegisterPage() {
               />
               <p className="text-xs text-gray-400 mt-1">Minimum 8 characters</p>
             </div>
+            {/* Consent */}
+            <div className="rounded-lg bg-gray-50 border border-gray-200 p-3 text-xs text-gray-500 leading-relaxed">
+              By creating an account you confirm that you are the parent or guardian
+              of the athlete, and that you have permission to upload their videos.
+              This service is private — only you can access your data.
+              It is not medical advice.
+            </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
             <button
               type="submit"

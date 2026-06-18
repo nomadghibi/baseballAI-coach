@@ -39,5 +39,26 @@ def update(db: Session, athlete: Athlete, data: AthleteUpdate) -> Athlete:
 
 
 def delete(db: Session, athlete: Athlete) -> None:
+    from app.core import storage as store
+    from app.sessions.models import PitchingSession
+    from app.videos.models import Video
+
+    # Collect and delete all video storage files before DB cascade removes records
+    session_ids = [
+        row[0]
+        for row in db.query(PitchingSession.id)
+        .filter(PitchingSession.athlete_id == athlete.id)
+        .all()
+    ]
+    if session_ids:
+        storage_keys = [
+            row[0]
+            for row in db.query(Video.storage_key)
+            .filter(Video.session_id.in_(session_ids))
+            .all()
+        ]
+        for key in storage_keys:
+            store.delete_file(key)
+
     db.delete(athlete)
     db.commit()
