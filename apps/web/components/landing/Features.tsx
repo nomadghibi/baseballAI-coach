@@ -146,18 +146,12 @@ export default function Features() {
           {FEATURES.map((f, i) => (
             <FadeIn key={f.title} delay={i * 0.06}>
               <div
-                className={`glass-card p-6 h-full flex flex-col gap-3 transition-all duration-300 relative overflow-hidden ${
+                className={`glass-card p-6 h-full flex flex-col gap-3 transition-all duration-300 group ${
                   f.soon
-                    ? "opacity-60"
-                    : "hover:border-white/[0.12] hover:bg-white/[0.06] group"
+                    ? "border-white/[0.05]"
+                    : "hover:border-white/[0.12] hover:bg-white/[0.06]"
                 }`}
               >
-                {f.soon && (
-                  <span className="absolute top-3.5 right-3.5 text-[9px] font-bold uppercase tracking-widest text-slate-500 border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 rounded-full">
-                    Coming Soon
-                  </span>
-                )}
-
                 <div
                   className={`w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${
                     f.soon
@@ -168,20 +162,19 @@ export default function Features() {
                   {f.icon}
                 </div>
 
-                <h3
-                  className={`font-display font-bold text-[1.05rem] leading-snug ${
-                    f.soon ? "text-slate-500" : "text-white"
-                  }`}
-                >
+                <h3 className="font-display font-bold text-[1.05rem] text-white leading-snug">
                   {f.title}
                 </h3>
-                <p
-                  className={`text-sm leading-relaxed ${
-                    f.soon ? "text-slate-600" : "text-slate-400"
-                  }`}
-                >
-                  {f.desc}
-                </p>
+                <p className="text-slate-400 text-sm leading-relaxed flex-1">{f.desc}</p>
+
+                {f.soon && (
+                  <div className="pt-1">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-400 border border-white/[0.1] bg-white/[0.04] px-3 py-1.5 rounded-lg">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                      Coming Soon
+                    </span>
+                  </div>
+                )}
               </div>
             </FadeIn>
           ))}
