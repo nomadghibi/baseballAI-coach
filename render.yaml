@@ -1,0 +1,29 @@
+databases:
+  - name: baseballai-db
+    databaseName: baseballai
+    user: baseballai
+    plan: free
+
+services:
+  - type: web
+    name: baseballai-api
+    runtime: python
+    rootDir: apps/api
+    buildCommand: pip install -r requirements.txt
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: baseballai-db
+          property: connectionString
+      - key: DEBUG
+        value: "false"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: '["https://baseballai-coach.vercel.app","http://localhost:3000"]'
+      - key: STORAGE_PROVIDER
+        value: local
+      - key: PYTHON_VERSION
+        value: "3.12.0"
