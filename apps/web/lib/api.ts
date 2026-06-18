@@ -8,6 +8,7 @@ import type {
   InitUploadResponse,
   Note,
   PlaybackUrlResponse,
+  ProgressData,
   Session,
   SessionCreate,
   SessionListItem,
@@ -52,6 +53,7 @@ export const api = {
     update: (id: string, data: Partial<AthleteCreate>) =>
       request<Athlete>(`/athletes/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
     delete: (id: string) => request(`/athletes/${id}`, { method: "DELETE" }),
+    progress: (id: string) => request<ProgressData>(`/athletes/${id}/progress`),
   },
   sessions: {
     list: (athleteId: string) =>

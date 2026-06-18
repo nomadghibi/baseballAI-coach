@@ -136,6 +136,29 @@ export interface KeypointFrame {
   lm: Record<string, { x: number; y: number; v: number }>
 }
 
+export interface TrendPoint {
+  session_id: string
+  session_title: string
+  date: string
+  overall_score: number
+  balance_score: number
+  head_stability_score: number
+  stride_score: number
+  arm_slot_score: number
+  follow_through_score: number
+  video_quality_score: number
+}
+
+export interface ProgressData {
+  athlete_id: string
+  sessions_count: number
+  trends: TrendPoint[]
+  latest_summary: {
+    overall_score: number
+    change_from_previous: number | null
+  } | null
+}
+
 export interface Note {
   id: string
   session_id: string

@@ -92,6 +92,70 @@ def trigger_analysis(
     return job
 
 
+@router.get("/athletes/{athlete_id}/progress")
+def get_athlete_progress(
+    athlete_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Return per-session score trend and latest-vs-previous summary for an athlete."""
+    from app.athletes.models import Athlete
+    from app.sessions.models import PitchingSession
+
+    athlete = (
+        db.query(Athlete)
+        .filter(Athlete.id == athlete_id, Athlete.owner_user_id == current_user.id)
+        .first()
+    )
+    if not athlete:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Athlete not found")
+
+    rows = (
+        db.query(
+            AnalysisResult,
+            PitchingSession.session_date,
+            PitchingSession.title,
+        )
+        .join(PitchingSession, PitchingSession.id == AnalysisResult.session_id)
+        .filter(AnalysisResult.athlete_id == athlete_id)
+        .order_by(PitchingSession.session_date.asc(), AnalysisResult.created_at.asc())
+        .all()
+    )
+
+    trends = [
+        {
+            "session_id": str(row.AnalysisResult.session_id),
+            "session_title": row.title,
+            "date": row.session_date.isoformat(),
+            "overall_score": float(row.AnalysisResult.overall_score),
+            "balance_score": float(row.AnalysisResult.balance_score),
+            "head_stability_score": float(row.AnalysisResult.head_stability_score),
+            "stride_score": float(row.AnalysisResult.stride_score),
+            "arm_slot_score": float(row.AnalysisResult.arm_slot_score),
+            "follow_through_score": float(row.AnalysisResult.follow_through_score),
+            "video_quality_score": float(row.AnalysisResult.video_quality_score),
+        }
+        for row in rows
+    ]
+
+    latest = trends[-1] if trends else None
+    prev = trends[-2] if len(trends) >= 2 else None
+
+    return {
+        "athlete_id": str(athlete_id),
+        "sessions_count": len(trends),
+        "trends": trends,
+        "latest_summary": {
+            "overall_score": latest["overall_score"],
+            "change_from_previous": (
+                round(latest["overall_score"] - prev["overall_score"], 1) if prev else None
+            ),
+        }
+        if latest
+        else None,
+    }
+
+
 @router.get("/videos/{video_id}/analysis", response_model=AnalysisResultResponse)
 def get_analysis(
     video_id: uuid.UUID,
