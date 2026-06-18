@@ -15,6 +15,7 @@ from app.athletes.models import Athlete  # noqa: F401
 from app.sessions.models import PitchingSession  # noqa: F401
 from app.videos.models import Video  # noqa: F401
 from app.analysis.models import AnalysisJob, AnalysisResult, KeypointData  # noqa: F401
+from app.notes.models import CoachNote  # noqa: F401
 
 target_metadata = Base.metadata
 

@@ -6,6 +6,7 @@ import type {
   AuthResponse,
   CompleteUploadResponse,
   InitUploadResponse,
+  Note,
   PlaybackUrlResponse,
   Session,
   SessionCreate,
@@ -91,5 +92,16 @@ export const api = {
       request<AnalysisResult>(`/videos/${videoId}/analysis`),
     trigger: (videoId: string) =>
       request<AnalysisJob>(`/videos/${videoId}/analyze`, { method: "POST" }),
+  },
+  notes: {
+    list: (sessionId: string) => request<Note[]>(`/sessions/${sessionId}/notes`),
+    create: (sessionId: string, note: string) =>
+      request<Note>(`/sessions/${sessionId}/notes`, {
+        method: "POST",
+        body: JSON.stringify({ note }),
+      }),
+    update: (noteId: string, note: string) =>
+      request<Note>(`/notes/${noteId}`, { method: "PATCH", body: JSON.stringify({ note }) }),
+    delete: (noteId: string) => request(`/notes/${noteId}`, { method: "DELETE" }),
   },
 }

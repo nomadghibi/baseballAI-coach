@@ -8,6 +8,7 @@ from app.auth.routes import router as auth_router
 from app.athletes.routes import router as athletes_router
 from app.core.config import settings
 from app.analysis.routes import router as analysis_router
+from app.notes.routes import router as notes_router
 from app.sessions.routes import router as sessions_router
 from app.videos.routes import router as videos_router
 
@@ -32,6 +33,7 @@ app.include_router(athletes_router, prefix=API_PREFIX)
 app.include_router(sessions_router, prefix=API_PREFIX)
 app.include_router(videos_router, prefix=API_PREFIX)
 app.include_router(analysis_router, prefix=API_PREFIX)
+app.include_router(notes_router, prefix=API_PREFIX)
 
 # Local dev: serve uploaded files as static. Not used in production.
 if settings.storage_provider == "local":

@@ -125,6 +125,22 @@ export interface AnalysisResult {
   phases: { name: string; start_sec: number; end_sec: number; confidence: number }[]
   metrics_detail: Record<string, { score: number; confidence: number; details: Record<string, number> }>
   feedback: FeedbackItem[]
-  keypoints: unknown[]
+  keypoints: KeypointFrame[]
   created_at: string
+}
+
+export interface KeypointFrame {
+  t: number
+  fi: number
+  conf: number
+  lm: Record<string, { x: number; y: number; v: number }>
+}
+
+export interface Note {
+  id: string
+  session_id: string
+  author_user_id: string
+  note: string
+  created_at: string
+  updated_at: string
 }
