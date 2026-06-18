@@ -10,6 +10,7 @@ const FEATURES = [
       </svg>
     ),
     accent: "amber",
+    soon: false,
   },
   {
     title: "Phase-by-Phase Timeline",
@@ -20,6 +21,7 @@ const FEATURES = [
       </svg>
     ),
     accent: "sky",
+    soon: false,
   },
   {
     title: "15+ Biomechanical Metrics",
@@ -30,6 +32,7 @@ const FEATURES = [
       </svg>
     ),
     accent: "amber",
+    soon: false,
   },
   {
     title: "Progress Tracking",
@@ -40,6 +43,7 @@ const FEATURES = [
       </svg>
     ),
     accent: "green",
+    soon: false,
   },
   {
     title: "Multiple Athlete Profiles",
@@ -50,6 +54,7 @@ const FEATURES = [
       </svg>
     ),
     accent: "purple",
+    soon: false,
   },
   {
     title: "Coach Notes & Feedback",
@@ -60,6 +65,51 @@ const FEATURES = [
       </svg>
     ),
     accent: "sky",
+    soon: false,
+  },
+  {
+    title: "Hitting Analysis",
+    desc: "Stance, load, hip rotation, bat path, and swing consistency — the same AI analysis applied to your hitter's mechanics.",
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+      </svg>
+    ),
+    accent: "amber",
+    soon: true,
+  },
+  {
+    title: "Video Comparison",
+    desc: "Place two sessions side-by-side to see mechanical changes over time. Perfect for tracking drill improvements.",
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+      </svg>
+    ),
+    accent: "sky",
+    soon: true,
+  },
+  {
+    title: "Team Analytics",
+    desc: "Roster-level dashboards, workload tracking, and group progress reports for coaches managing multiple athletes.",
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+      </svg>
+    ),
+    accent: "purple",
+    soon: true,
+  },
+  {
+    title: "PDF Reports",
+    desc: "Export a clean, shareable PDF summary of any session — mechanics breakdown, metrics, and coach notes in one page.",
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+      </svg>
+    ),
+    accent: "green",
+    soon: true,
   },
 ];
 
@@ -68,6 +118,13 @@ const accentMap: Record<string, string> = {
   sky:    "bg-sky-400/10 text-sky-400 border-sky-400/15",
   green:  "bg-emerald-400/10 text-emerald-400 border-emerald-400/15",
   purple: "bg-violet-400/10 text-violet-400 border-violet-400/15",
+};
+
+const accentSoonMap: Record<string, string> = {
+  amber:  "bg-amber-400/5 text-amber-400/40 border-amber-400/10",
+  sky:    "bg-sky-400/5 text-sky-400/40 border-sky-400/10",
+  green:  "bg-emerald-400/5 text-emerald-400/40 border-emerald-400/10",
+  purple: "bg-violet-400/5 text-violet-400/40 border-violet-400/10",
 };
 
 export default function Features() {
@@ -87,17 +144,44 @@ export default function Features() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {FEATURES.map((f, i) => (
-            <FadeIn key={f.title} delay={i * 0.07}>
-              <div className="glass-card p-6 h-full flex flex-col gap-3 hover:border-white/[0.12] hover:bg-white/[0.06] transition-all duration-300 group">
+            <FadeIn key={f.title} delay={i * 0.06}>
+              <div
+                className={`glass-card p-6 h-full flex flex-col gap-3 transition-all duration-300 relative overflow-hidden ${
+                  f.soon
+                    ? "opacity-60"
+                    : "hover:border-white/[0.12] hover:bg-white/[0.06] group"
+                }`}
+              >
+                {f.soon && (
+                  <span className="absolute top-3.5 right-3.5 text-[9px] font-bold uppercase tracking-widest text-slate-500 border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 rounded-full">
+                    Coming Soon
+                  </span>
+                )}
+
                 <div
-                  className={`w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5 ${accentMap[f.accent]}`}
+                  className={`w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${
+                    f.soon
+                      ? accentSoonMap[f.accent]
+                      : `group-hover:-translate-y-0.5 ${accentMap[f.accent]}`
+                  }`}
                 >
                   {f.icon}
                 </div>
-                <h3 className="font-display font-bold text-[1.05rem] text-white leading-snug">
+
+                <h3
+                  className={`font-display font-bold text-[1.05rem] leading-snug ${
+                    f.soon ? "text-slate-500" : "text-white"
+                  }`}
+                >
                   {f.title}
                 </h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{f.desc}</p>
+                <p
+                  className={`text-sm leading-relaxed ${
+                    f.soon ? "text-slate-600" : "text-slate-400"
+                  }`}
+                >
+                  {f.desc}
+                </p>
               </div>
             </FadeIn>
           ))}
