@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
 
 import { api } from "@/lib/api"
@@ -12,6 +12,8 @@ import type { AthleteCreate } from "@/lib/types"
 export default function NewAthletePage() {
   const ready = useRequireAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const isOnboarding = searchParams.get("onboarding") === "1"
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -38,6 +40,14 @@ export default function NewAthletePage() {
       </nav>
 
       <main className="max-w-2xl mx-auto px-6 py-8">
+        {isOnboarding && (
+          <div className="mb-6 bg-blue-50 border border-blue-100 rounded-xl px-5 py-4">
+            <p className="text-sm font-semibold text-blue-800">Step 1 of 3 — Add your pitcher</p>
+            <p className="text-xs text-blue-600 mt-0.5">
+              Just a name and throwing hand to start. You can add more details later.
+            </p>
+          </div>
+        )}
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Add athlete</h1>
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <AthleteProfileForm

@@ -26,7 +26,7 @@ export default function RegisterPage() {
     try {
       const res = await api.auth.register({ email, password, full_name: fullName || undefined })
       setToken(res.access_token)
-      router.replace("/dashboard")
+      router.replace("/athletes/new?onboarding=1")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed")
     } finally {
