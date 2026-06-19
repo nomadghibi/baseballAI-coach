@@ -12,7 +12,7 @@ fi
 
 echo "Running database migrations..."
 TRIES=0
-MAX=30
+MAX=60
 until alembic upgrade head; do
     TRIES=$((TRIES + 1))
     if [ "$TRIES" -ge "$MAX" ]; then

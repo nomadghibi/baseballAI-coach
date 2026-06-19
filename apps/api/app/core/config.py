@@ -13,9 +13,12 @@ class Settings(BaseSettings):
     @field_validator("database_url", mode="before")
     @classmethod
     def fix_postgres_scheme(cls, v: str) -> str:
-        # Render (and some providers) return postgres:// — SQLAlchemy 2.x needs postgresql://
         if isinstance(v, str) and v.startswith("postgres://"):
-            return v.replace("postgres://", "postgresql://", 1)
+            v = v.replace("postgres://", "postgresql://", 1)
+        # Add connect_timeout so failed attempts don't hang for 30s each
+        if isinstance(v, str) and "connect_timeout" not in v:
+            sep = "&" if "?" in v else "?"
+            v = f"{v}{sep}connect_timeout=10"
         return v
 
     cors_origins: list[str] = ["http://localhost:3000"]
