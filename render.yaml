@@ -7,8 +7,16 @@ services:
     startCommand: bash start.sh
     plan: free
     envVars:
-      - key: DATABASE_URL
+      - key: DB_HOST
         sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: postgres
+      - key: DB_PORT
+        value: "5432"
       - key: DEBUG
         value: "false"
       - key: SECRET_KEY
