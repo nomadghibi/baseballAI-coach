@@ -1,14 +1,13 @@
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import pool
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Import models so Alembic detects them
 from app.core.database import Base
 from app.auth.models import User  # noqa: F401
 from app.athletes.models import Athlete  # noqa: F401
@@ -21,10 +20,9 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    from app.core.config import settings
-
+    from app.core.config import build_db_url
     context.configure(
-        url=settings.database_url,
+        url=build_db_url().render_as_string(hide_password=False),
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -34,17 +32,11 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    from app.core.config import settings
     from sqlalchemy import create_engine
-    from sqlalchemy.engine import make_url
+    from app.core.config import build_db_url
 
-    parsed = make_url(settings.database_url)
-    is_local = parsed.host in (None, "localhost", "127.0.0.1")
-    connect_args: dict = {"connect_timeout": 10}
-    if not is_local:
-        connect_args["sslmode"] = "require"
-
-    connectable = create_engine(parsed, poolclass=pool.NullPool, connect_args=connect_args)
+    url = build_db_url()
+    connectable = create_engine(url, poolclass=pool.NullPool)
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():

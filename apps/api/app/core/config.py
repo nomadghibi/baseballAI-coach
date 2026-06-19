@@ -1,49 +1,35 @@
 import json
-from pydantic import model_validator
+import os
+
 from pydantic_settings import BaseSettings
 from sqlalchemy.engine import URL
+
+
+def build_db_url() -> URL:
+    """Build SQLAlchemy URL from DB_* env vars. Never interpolates password into strings."""
+    host = os.environ.get("DB_HOST", "").split(":")[0]
+    user = os.environ.get("DB_USER", "")
+    password = os.environ.get("DB_PASSWORD", "")
+    port = int(os.environ.get("DB_PORT", "5432"))
+    name = os.environ.get("DB_NAME", "postgres")
+
+    is_local = host in ("", "localhost", "127.0.0.1")
+
+    return URL.create(
+        drivername="postgresql+psycopg2",
+        username=user or "baseballai",
+        password=password or "baseballai_dev",
+        host=host or "localhost",
+        port=port,
+        database=name,
+        query={"sslmode": "require"} if not is_local else {},
+    )
 
 
 class Settings(BaseSettings):
     app_name: str = "BaseballAI Coach API"
     version: str = "0.1.0"
     debug: bool = False
-
-    # Full URL (optional — overridden if DB_* parts are set)
-    database_url: str = ""
-
-    # Individual DB parts — use these when password has special chars
-    db_host: str = ""
-    db_port: int = 5432
-    db_name: str = "postgres"
-    db_user: str = "postgres"
-    db_password: str = ""
-
-    @model_validator(mode="after")
-    def resolve_database_url(self) -> "Settings":
-        import os
-        # Read directly from env — bypasses any pydantic-settings field mapping issues
-        host = os.environ.get("DB_HOST", self.db_host).split(":")[0]
-        user = os.environ.get("DB_USER", self.db_user)
-        password = os.environ.get("DB_PASSWORD", self.db_password)
-        port = int(os.environ.get("DB_PORT", str(self.db_port)))
-        name = os.environ.get("DB_NAME", self.db_name)
-
-        if host and password:
-            self.database_url = str(URL.create(
-                drivername="postgresql",
-                username=user,
-                password=password,
-                host=host,
-                port=port,
-                database=name,
-            ))
-        elif self.database_url.startswith("postgres://"):
-            self.database_url = self.database_url.replace("postgres://", "postgresql://", 1)
-        elif not self.database_url:
-            # Local dev fallback
-            self.database_url = "postgresql://baseballai:baseballai_dev@localhost:5432/baseballai"
-        return self
 
     cors_origins: list[str] = ["http://localhost:3000"]
 
