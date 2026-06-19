@@ -13,12 +13,20 @@ class Settings(BaseSettings):
     @field_validator("database_url", mode="before")
     @classmethod
     def fix_postgres_scheme(cls, v: str) -> str:
-        if isinstance(v, str) and v.startswith("postgres://"):
+        if not isinstance(v, str):
+            return v
+        if v.startswith("postgres://"):
             v = v.replace("postgres://", "postgresql://", 1)
-        # Add connect_timeout so failed attempts don't hang for 30s each
-        if isinstance(v, str) and "connect_timeout" not in v:
+        # Fast failure per attempt
+        if "connect_timeout" not in v:
             sep = "&" if "?" in v else "?"
             v = f"{v}{sep}connect_timeout=10"
+        # External Render hostnames need SSL; localhost/internal don't
+        if "connect_timeout" in v and "sslmode" not in v:
+            host = v.split("@")[-1].split("/")[0].split("?")[0]
+            if "localhost" not in host and "127.0.0.1" not in host:
+                sep = "&" if "?" in v else "?"
+                v = f"{v}{sep}sslmode=require"
         return v
 
     cors_origins: list[str] = ["http://localhost:3000"]
