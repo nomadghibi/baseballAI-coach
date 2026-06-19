@@ -9,7 +9,7 @@ services:
     name: baseballai-api
     runtime: python
     rootDir: apps/api
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt -r requirements-cv.txt
     startCommand: bash start.sh
     plan: free
     envVars:
