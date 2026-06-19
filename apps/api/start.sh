@@ -1,9 +1,16 @@
 #!/bin/sh
 set -e
 
-echo "Waiting for database to be ready..."
+echo "Running database migrations..."
+TRIES=0
+MAX=30
 until alembic upgrade head; do
-    echo "Migration failed — database not ready yet, retrying in 5s..."
+    TRIES=$((TRIES + 1))
+    if [ "$TRIES" -ge "$MAX" ]; then
+        echo "ERROR: migrations failed after $MAX attempts. Exiting."
+        exit 1
+    fi
+    echo "Migration failed (attempt $TRIES/$MAX) — retrying in 5s..."
     sleep 5
 done
 
