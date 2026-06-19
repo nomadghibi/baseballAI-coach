@@ -35,10 +35,15 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     from app.core.config import settings
+    from sqlalchemy import create_engine
 
-    cfg = config.get_section(config.config_ini_section, {})
-    cfg["sqlalchemy.url"] = settings.database_url
-    connectable = engine_from_config(cfg, prefix="sqlalchemy.", poolclass=pool.NullPool)
+    url = settings.database_url
+    is_local = "localhost" in url or "127.0.0.1" in url
+    connect_args: dict = {"connect_timeout": 10}
+    if not is_local:
+        connect_args["sslmode"] = "require"
+
+    connectable = create_engine(url, poolclass=pool.NullPool, connect_args=connect_args)
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
