@@ -13,6 +13,17 @@ else
 fi
 
 echo "DB_HOST=$DB_HOST DB_USER=$DB_USER DB_PORT=$DB_PORT DB_NAME=$DB_NAME DB_PASSWORD_SET=${DB_PASSWORD:+yes}"
+python3 -c "
+import os, sys
+sys.path.insert(0, '.')
+from app.core.config import settings
+from sqlalchemy.engine import make_url
+try:
+    u = make_url(settings.database_url)
+    print(f'Resolved URL: {u.drivername}://{u.username}:***@{u.host}:{u.port}/{u.database}')
+except Exception as e:
+    print(f'URL parse error: {e}')
+"
 echo "Running database migrations..."
 TRIES=0
 MAX=5
