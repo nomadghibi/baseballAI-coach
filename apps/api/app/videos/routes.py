@@ -35,7 +35,11 @@ def init_upload(
     video = service.init_upload(db, session_id, data, current_user.id)
     return InitUploadResponse(
         video_id=video.id,
-        upload_url=store.get_upload_url(str(video.id)),
+        upload_url=store.get_upload_url(
+            str(video.id),
+            storage_key=video.storage_key,
+            content_type=data.content_type,
+        ),
         storage_provider=settings.storage_provider,
         max_size_bytes=settings.max_video_size_bytes,
     )

@@ -7,9 +7,7 @@ Creates its own DB session — cannot use request-scoped sessions.
 
 import uuid
 from datetime import datetime, timezone
-from pathlib import Path
 
-from app.core.config import settings
 from app.core.database import SessionLocal
 
 
@@ -34,25 +32,27 @@ def run_analysis_job_task(job_id: uuid.UUID, video_id: uuid.UUID) -> None:
         job.started_at = datetime.now(timezone.utc)
         db.commit()
 
-        # Resolve video path — local storage only in Phase 4
-        if video.storage_provider != "local":
-            raise ValueError(
-                f"Storage provider '{video.storage_provider}' not supported. "
-                "Configure local storage for development."
-            )
-        video_path = str(Path(settings.storage_local_dir) / video.storage_key)
-        if not Path(video_path).exists():
-            raise FileNotFoundError(f"Video file not found: {video_path}")
-
         # Get throwing hand from athlete profile
         session_row = db.query(PitchingSession).filter(PitchingSession.id == video.session_id).first()
         athlete = db.query(Athlete).filter(Athlete.id == session_row.athlete_id).first()
         throwing_hand = (athlete.throwing_hand or "right").lower()
 
-        # Run CV pipeline (requires requirements-cv.txt)
-        from app.analysis.pipeline import analyze_video
+        # Download video to temp file (works for local and r2)
+        from app.core import storage as store
+        tmp = store.download_to_temp(video.storage_key)
+        video_path = tmp.name
+        tmp.close()
 
-        result_dict = analyze_video(video_path, throwing_hand=throwing_hand)
+        # Run CV pipeline
+        try:
+            from app.analysis.pipeline import analyze_video
+            result_dict = analyze_video(video_path, throwing_hand=throwing_hand)
+        finally:
+            import os
+            try:
+                os.unlink(video_path)
+            except OSError:
+                pass
 
         if result_dict.get("status") == "failed":
             raise RuntimeError(result_dict.get("reason", "CV pipeline returned failed status"))

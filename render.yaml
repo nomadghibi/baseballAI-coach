@@ -24,7 +24,15 @@ services:
       - key: CORS_ORIGINS
         value: '["https://baseballai-coach.vercel.app","http://localhost:3000"]'
       - key: STORAGE_PROVIDER
-        value: local
+        value: r2
+      - key: STORAGE_BUCKET
+        sync: false
+      - key: STORAGE_ENDPOINT
+        sync: false
+      - key: STORAGE_ACCESS_KEY
+        sync: false
+      - key: STORAGE_SECRET_KEY
+        sync: false
       - key: PYTHON_VERSION
         value: "3.12.0"
       - key: RESEND_API_KEY
