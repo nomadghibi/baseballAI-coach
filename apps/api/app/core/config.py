@@ -22,12 +22,13 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def resolve_database_url(self) -> "Settings":
         if self.db_host and self.db_password:
-            # Build URL from parts — password never URL-encoded by user
+            # Strip port if user accidentally included it in DB_HOST
+            host = self.db_host.split(":")[0]
             self.database_url = str(URL.create(
                 drivername="postgresql",
                 username=self.db_user,
                 password=self.db_password,
-                host=self.db_host,
+                host=host,
                 port=self.db_port,
                 database=self.db_name,
             ))
