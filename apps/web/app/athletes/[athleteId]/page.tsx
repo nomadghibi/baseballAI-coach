@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { api } from "@/lib/api"
 import { useRequireAuth } from "@/lib/auth"
@@ -31,12 +31,36 @@ export default function AthleteDetailPage() {
   const [saveError, setSaveError] = useState("")
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  async function refreshSessions() {
+    const updated = await api.sessions.list(athleteId).catch(() => null)
+    if (!updated) return
+    setSessions(updated)
+    // If any session finished processing, refresh progress too
+    const wasProcessing = sessions.some((s) => s.video_status === "processing")
+    const nowDone = updated.every((s) => s.video_status !== "processing")
+    if (wasProcessing && nowDone) {
+      api.athletes.progress(athleteId).then(setProgress).catch(() => {})
+      if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
+    }
+    // Stop polling if nothing processing
+    if (updated.every((s) => s.video_status !== "processing")) {
+      if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
+    }
+  }
 
   useEffect(() => {
     if (!ready || !athleteId) return
     api.athletes.get(athleteId).then(setAthlete).catch((e) => setFetchError(e.message))
-    api.sessions.list(athleteId).then(setSessions).catch(() => {})
+    api.sessions.list(athleteId).then((s) => {
+      setSessions(s)
+      if (s.some((x) => x.video_status === "processing")) {
+        pollRef.current = setInterval(refreshSessions, 5000)
+      }
+    }).catch(() => {})
     api.athletes.progress(athleteId).then(setProgress).catch(() => {})
+    return () => { if (pollRef.current) clearInterval(pollRef.current) }
   }, [ready, athleteId])
 
   async function handleSave(data: AthleteCreate) {

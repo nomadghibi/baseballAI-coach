@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useRef, useState } from "react"
 import { api } from "@/lib/api"
 import { getToken } from "@/lib/auth"
@@ -174,6 +175,13 @@ export default function VideoUpload({ sessionId, onComplete }: VideoUploadProps)
           <span className="font-medium">📹 Tips for best analysis results</span>
           <span className="text-gray-400 text-xs">{showTips ? "Hide" : "Show"}</span>
         </button>
+        {!showTips && (
+          <div className="px-4 pb-3">
+            <Link href="/guide" target="_blank" className="text-xs text-blue-500 hover:underline">
+              Full recording guide →
+            </Link>
+          </div>
+        )}
         {showTips && (
           <div className="px-4 pb-4 space-y-2.5 border-t border-gray-100">
             {RECORDING_TIPS.map((t, i) => (
