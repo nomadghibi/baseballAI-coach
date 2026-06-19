@@ -12,8 +12,8 @@ fi
 
 echo "Running database migrations..."
 TRIES=0
-MAX=60
-until alembic upgrade head; do
+MAX=5
+until alembic upgrade head 2>&1; do
     TRIES=$((TRIES + 1))
     if [ "$TRIES" -ge "$MAX" ]; then
         echo "ERROR: migrations failed after $MAX attempts. Exiting."

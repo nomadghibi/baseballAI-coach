@@ -1,10 +1,12 @@
 from sqlalchemy import create_engine
+from sqlalchemy.engine import make_url
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from app.core.config import settings
 
-_url = settings.database_url
-_is_local = "localhost" in _url or "127.0.0.1" in _url
+_raw = settings.database_url
+_url = make_url(_raw)  # parses URL, handles special chars in password correctly
+_is_local = _url.host in (None, "localhost", "127.0.0.1")
 
 _connect_args: dict = {"connect_timeout": 10}
 if not _is_local:
