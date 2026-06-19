@@ -12,6 +12,7 @@ else
     exit 1
 fi
 
+echo "DB_HOST=$DB_HOST DB_USER=$DB_USER DB_PORT=$DB_PORT DB_NAME=$DB_NAME DB_PASSWORD_SET=${DB_PASSWORD:+yes}"
 echo "Running database migrations..."
 TRIES=0
 MAX=5
