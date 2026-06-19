@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     max_video_size_bytes: int = 500 * 1024 * 1024  # 500 MB
     allowed_video_types: list[str] = ["video/mp4", "video/quicktime", "video/x-m4v"]
 
+    resend_api_key: str = ""
+    resend_from_email: str = "BaseballAI Coach <onboarding@resend.dev>"
+    app_base_url: str = "https://baseballai-coach.vercel.app"
+
     model_config = {"env_file": ".env", "case_sensitive": False}
 
     def cors_origins_list(self) -> list[str]:

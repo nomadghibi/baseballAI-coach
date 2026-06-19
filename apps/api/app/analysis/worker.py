@@ -90,6 +90,25 @@ def run_analysis_job_task(job_id: uuid.UUID, video_id: uuid.UUID) -> None:
         job.completed_at = datetime.now(timezone.utc)
         db.commit()
 
+        # Email notification — fetch user email after commit so all data is final
+        try:
+            from app.auth.models import User
+            from app.core.email import send_analysis_complete_email
+
+            user = db.query(User).filter(User.id == athlete.owner_user_id).first()
+            if user:
+                send_analysis_complete_email(
+                    to_email=user.email,
+                    athlete_name=athlete.first_name,
+                    session_title=session_row.title,
+                    session_id=str(video.session_id),
+                    overall_score=result_dict.get("overall_score", 0),
+                    top_feedback=result_dict.get("feedback", []),
+                )
+        except Exception as email_exc:
+            import logging
+            logging.getLogger(__name__).warning("Email notification failed: %s", email_exc)
+
     except Exception as exc:
         try:
             if job:
