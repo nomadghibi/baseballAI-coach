@@ -168,10 +168,20 @@ export default function SessionDetailPage() {
               {session.camera_angle && ` · ${cap(session.camera_angle)} view`}
             </p>
           </div>
-          <button onClick={handleDeleteSession} disabled={deleting}
-            className="text-sm px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 disabled:opacity-50">
-            {deleting ? "Deleting…" : "Delete session"}
-          </button>
+          <div className="flex items-center gap-2">
+            {analysisResult && (
+              <Link
+                href={`/sessions/${sessionId}/report`}
+                className="text-sm px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                Print report
+              </Link>
+            )}
+            <button onClick={handleDeleteSession} disabled={deleting}
+              className="text-sm px-3 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 disabled:opacity-50">
+              {deleting ? "Deleting…" : "Delete session"}
+            </button>
+          </div>
         </div>
 
         {session.notes && (

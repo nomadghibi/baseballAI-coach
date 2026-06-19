@@ -7,6 +7,15 @@ import { getToken } from "@/lib/auth"
 const ALLOWED_TYPES = ["video/mp4", "video/quicktime", "video/x-m4v"]
 const MAX_SIZE_MB = 500
 
+const RECORDING_TIPS = [
+  { icon: "📐", tip: "Film from the side — the pitcher's throwing arm should face you or be away from you (not toward/away)." },
+  { icon: "🏃", tip: "Keep the pitcher's full body in frame: head to foot, for the entire pitch." },
+  { icon: "💡", tip: "Film in good light — outdoors or well-lit cage. Avoid backlit or shadowed shots." },
+  { icon: "📱", tip: "Hold the phone steady or lean it against a fence/dugout. Avoid panning while recording." },
+  { icon: "🎥", tip: "Record one pitch per video for clearest analysis. 10–30 seconds is plenty." },
+  { icon: "👕", tip: "Pitcher should wear fitted clothes — loose shirts hide joint positions." },
+]
+
 interface VideoUploadProps {
   sessionId: string
   onComplete: (videoId: string, jobId: string | null) => void
@@ -19,6 +28,7 @@ export default function VideoUpload({ sessionId, onComplete }: VideoUploadProps)
   const [state, setState] = useState<UploadState>("idle")
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState("")
+  const [showTips, setShowTips] = useState(false)
 
   function validateFile(file: File): string | null {
     if (!ALLOWED_TYPES.includes(file.type)) {
@@ -107,9 +117,6 @@ export default function VideoUpload({ sessionId, onComplete }: VideoUploadProps)
           Drop video here or <span className="text-blue-600">browse</span>
         </p>
         <p className="text-xs text-gray-400 mt-1">MP4 or MOV · up to {MAX_SIZE_MB} MB</p>
-        <p className="text-xs text-gray-400 mt-3">
-          Tip: record from the side for best analysis results
-        </p>
       </div>
       <input
         ref={inputRef}
@@ -119,6 +126,28 @@ export default function VideoUpload({ sessionId, onComplete }: VideoUploadProps)
         onChange={handleInputChange}
       />
       {error && <p className="text-sm text-red-600">{error}</p>}
+
+      {/* Recording tips */}
+      <div className="rounded-xl border border-gray-200 overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setShowTips((v) => !v)}
+          className="w-full flex items-center justify-between px-4 py-3 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+        >
+          <span className="font-medium">📹 Tips for best analysis results</span>
+          <span className="text-gray-400 text-xs">{showTips ? "Hide" : "Show"}</span>
+        </button>
+        {showTips && (
+          <div className="px-4 pb-4 space-y-2.5 border-t border-gray-100">
+            {RECORDING_TIPS.map((t, i) => (
+              <div key={i} className="flex gap-3 text-sm text-gray-600">
+                <span className="shrink-0 text-base leading-snug">{t.icon}</span>
+                <span>{t.tip}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
