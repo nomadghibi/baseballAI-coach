@@ -21,16 +21,22 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def resolve_database_url(self) -> "Settings":
-        if self.db_host and self.db_password:
-            # Strip port if user accidentally included it in DB_HOST
-            host = self.db_host.split(":")[0]
+        import os
+        # Read directly from env — bypasses any pydantic-settings field mapping issues
+        host = os.environ.get("DB_HOST", self.db_host).split(":")[0]
+        user = os.environ.get("DB_USER", self.db_user)
+        password = os.environ.get("DB_PASSWORD", self.db_password)
+        port = int(os.environ.get("DB_PORT", str(self.db_port)))
+        name = os.environ.get("DB_NAME", self.db_name)
+
+        if host and password:
             self.database_url = str(URL.create(
                 drivername="postgresql",
-                username=self.db_user,
-                password=self.db_password,
+                username=user,
+                password=password,
                 host=host,
-                port=self.db_port,
-                database=self.db_name,
+                port=port,
+                database=name,
             ))
         elif self.database_url.startswith("postgres://"):
             self.database_url = self.database_url.replace("postgres://", "postgresql://", 1)
