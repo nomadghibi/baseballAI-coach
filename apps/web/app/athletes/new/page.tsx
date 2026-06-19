@@ -1,8 +1,10 @@
 "use client"
 
+export const dynamic = "force-dynamic"
+
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { Suspense, useState } from "react"
 
 import { api } from "@/lib/api"
 import { useRequireAuth } from "@/lib/auth"
