@@ -1,6 +1,7 @@
 import json
-from pydantic import field_validator
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
+from sqlalchemy.engine import URL
 
 
 class Settings(BaseSettings):
@@ -8,20 +9,40 @@ class Settings(BaseSettings):
     version: str = "0.1.0"
     debug: bool = False
 
-    database_url: str = "postgresql://baseballai:baseballai_dev@localhost:5432/baseballai"
+    # Full URL (optional — overridden if DB_* parts are set)
+    database_url: str = ""
 
-    @field_validator("database_url", mode="before")
-    @classmethod
-    def fix_postgres_scheme(cls, v: str) -> str:
-        if isinstance(v, str) and v.startswith("postgres://"):
-            return v.replace("postgres://", "postgresql://", 1)
-        return v
+    # Individual DB parts — use these when password has special chars
+    db_host: str = ""
+    db_port: int = 5432
+    db_name: str = "postgres"
+    db_user: str = "postgres"
+    db_password: str = ""
+
+    @model_validator(mode="after")
+    def resolve_database_url(self) -> "Settings":
+        if self.db_host and self.db_password:
+            # Build URL from parts — password never URL-encoded by user
+            self.database_url = str(URL.create(
+                drivername="postgresql",
+                username=self.db_user,
+                password=self.db_password,
+                host=self.db_host,
+                port=self.db_port,
+                database=self.db_name,
+            ))
+        elif self.database_url.startswith("postgres://"):
+            self.database_url = self.database_url.replace("postgres://", "postgresql://", 1)
+        elif not self.database_url:
+            # Local dev fallback
+            self.database_url = "postgresql://baseballai:baseballai_dev@localhost:5432/baseballai"
+        return self
 
     cors_origins: list[str] = ["http://localhost:3000"]
 
     secret_key: str = "change-me-in-production"
     algorithm: str = "HS256"
-    access_token_expire_minutes: int = 60 * 24  # 24 hours
+    access_token_expire_minutes: int = 60 * 24
 
     storage_provider: str = "local"
     storage_local_dir: str = "storage/uploads"
@@ -31,7 +52,7 @@ class Settings(BaseSettings):
     storage_access_key: str = ""
     storage_secret_key: str = ""
 
-    max_video_size_bytes: int = 500 * 1024 * 1024  # 500 MB
+    max_video_size_bytes: int = 500 * 1024 * 1024
     allowed_video_types: list[str] = ["video/mp4", "video/quicktime", "video/x-m4v"]
 
     resend_api_key: str = ""
