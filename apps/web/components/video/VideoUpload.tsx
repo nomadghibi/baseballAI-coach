@@ -25,6 +25,7 @@ type UploadState = "idle" | "uploading" | "completing" | "done" | "error"
 
 export default function VideoUpload({ sessionId, onComplete }: VideoUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const cameraRef = useRef<HTMLInputElement>(null)
   const [state, setState] = useState<UploadState>("idle")
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState("")
@@ -105,23 +106,59 @@ export default function VideoUpload({ sessionId, onComplete }: VideoUploadProps)
     )
   }
 
+  const isMobile = typeof window !== "undefined" && navigator.maxTouchPoints > 0
+
   return (
     <div className="space-y-3">
-      <div
-        onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
-        onClick={() => inputRef.current?.click()}
-        className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors"
-      >
-        <p className="text-gray-500 text-sm font-medium">
-          Drop video here or <span className="text-blue-600">browse</span>
-        </p>
-        <p className="text-xs text-gray-400 mt-1">MP4 or MOV · up to {MAX_SIZE_MB} MB</p>
-      </div>
+      {isMobile ? (
+        /* Mobile: two tap targets — camera and file library */
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => cameraRef.current?.click()}
+            className="flex flex-col items-center gap-2 border-2 border-dashed border-gray-300 rounded-xl py-8 px-4 text-center active:bg-blue-50 active:border-blue-400 transition-colors"
+          >
+            <span className="text-3xl">📷</span>
+            <span className="text-sm font-medium text-gray-600">Record video</span>
+            <span className="text-xs text-gray-400">Use camera</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="flex flex-col items-center gap-2 border-2 border-dashed border-gray-300 rounded-xl py-8 px-4 text-center active:bg-blue-50 active:border-blue-400 transition-colors"
+          >
+            <span className="text-3xl">🎬</span>
+            <span className="text-sm font-medium text-gray-600">Choose video</span>
+            <span className="text-xs text-gray-400">From library</span>
+          </button>
+          {/* Camera capture input */}
+          <input
+            ref={cameraRef}
+            type="file"
+            accept="video/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleInputChange}
+          />
+        </div>
+      ) : (
+        /* Desktop: drag-and-drop zone */
+        <div
+          onDrop={handleDrop}
+          onDragOver={(e) => e.preventDefault()}
+          onClick={() => inputRef.current?.click()}
+          className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors"
+        >
+          <p className="text-gray-500 text-sm font-medium">
+            Drop video here or <span className="text-blue-600">browse</span>
+          </p>
+          <p className="text-xs text-gray-400 mt-1">MP4 or MOV · up to {MAX_SIZE_MB} MB</p>
+        </div>
+      )}
       <input
         ref={inputRef}
         type="file"
-        accept="video/mp4,video/quicktime,.mov,.mp4,.m4v"
+        accept="video/mp4,video/quicktime,.mov,.mp4,.m4v,video/*"
         className="hidden"
         onChange={handleInputChange}
       />

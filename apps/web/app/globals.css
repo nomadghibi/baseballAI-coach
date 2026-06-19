@@ -26,6 +26,9 @@
 }
 
 @layer utilities {
+  .animate-pulse-slow {
+    animation: pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
   .text-gradient-amber {
     background: linear-gradient(135deg, #f59e0b 0%, #fde68a 60%, #fbbf24 100%);
     -webkit-background-clip: text;
