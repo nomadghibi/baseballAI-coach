@@ -15,6 +15,13 @@ const outfit = Outfit({
   display: "swap",
 });
 
+export const viewport = {
+  themeColor: "#1e3a5f",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+}
+
 export const metadata: Metadata = {
   title: {
     default: "BaseballAI Coach — AI-Powered Pitching Analysis for Youth Athletes",

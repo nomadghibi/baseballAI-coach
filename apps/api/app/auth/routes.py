@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import service
 from app.auth.models import User
-from app.auth.schemas import AuthResponse, LoginRequest, RegisterRequest, UserResponse
+from app.auth.schemas import AuthResponse, LoginRequest, RegisterRequest, UpdateProfileRequest, UserResponse
 from app.core.deps import get_current_user, get_db
 from app.core.ratelimit import check_rate_limit
 
@@ -31,4 +31,17 @@ def logout():
 
 @router.get("/me", response_model=UserResponse)
 def me(current_user: User = Depends(get_current_user)):
+    return current_user
+
+
+@router.patch("/me", response_model=UserResponse)
+def update_me(
+    data: UpdateProfileRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if data.full_name is not None:
+        current_user.full_name = data.full_name.strip() or None
+    db.commit()
+    db.refresh(current_user)
     return current_user
