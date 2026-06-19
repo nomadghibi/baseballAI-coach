@@ -19,7 +19,10 @@ def build_storage_key(user_id: str, video_id: str, filename: str) -> str:
 # ── R2 / S3 client ───────────────────────────────────────────────────────────
 
 def _s3_client():
-    import boto3
+    try:
+        import boto3
+    except ImportError:
+        raise RuntimeError("boto3 not installed — add boto3>=1.35.0 to requirements.txt to use R2 storage")
     return boto3.client(
         "s3",
         endpoint_url=settings.storage_endpoint,
