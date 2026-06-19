@@ -1,7 +1,5 @@
 "use client"
 
-export const dynamic = "force-dynamic"
-
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useState } from "react"
@@ -11,7 +9,7 @@ import { useRequireAuth } from "@/lib/auth"
 import AthleteProfileForm from "@/components/athlete/AthleteProfileForm"
 import type { AthleteCreate } from "@/lib/types"
 
-export default function NewAthletePage() {
+function NewAthleteContent() {
   const ready = useRequireAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -61,5 +59,13 @@ export default function NewAthletePage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function NewAthletePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
+      <NewAthleteContent />
+    </Suspense>
   )
 }
