@@ -2,11 +2,13 @@
 set -e
 
 # Log which DB host we're connecting to (safe — no password printed)
-DB_HOST=$(echo "$DATABASE_URL" | sed 's|.*@||' | sed 's|/.*||')
-echo "Connecting to database host: ${DB_HOST:-NOT SET}"
-
-if [ -z "$DATABASE_URL" ]; then
-    echo "ERROR: DATABASE_URL is not set. Check Render environment variables."
+if [ -n "$DB_HOST" ]; then
+    echo "Connecting to database host: $DB_HOST"
+elif [ -n "$DATABASE_URL" ]; then
+    DB_HOST=$(echo "$DATABASE_URL" | sed 's|.*@||' | sed 's|[:/].*||')
+    echo "Connecting to database host: $DB_HOST"
+else
+    echo "ERROR: Neither DB_HOST nor DATABASE_URL is set."
     exit 1
 fi
 
